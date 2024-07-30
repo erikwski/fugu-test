@@ -10,7 +10,7 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   directoryPicker: FileSystemDirectoryHandle | null = null;
-  fileHandler: FileSystemFileHandle|null = null;
+  fileHandler: FileSystemFileHandle | null = null;
   fileCreated = false;
   declareFolder() {
     try {
@@ -85,5 +85,43 @@ export class AppComponent {
     } catch (error) {
       alert('Something went wrong');
     }
+  }
+
+  async createCsvFilled() {
+    function getRandomData() {
+      return Math.random().toString(36).substring(7);
+    }
+
+    this.fileHandler = await(window as any)['showSaveFilePicker']({
+      startIn: this.directoryPicker,
+      suggestedName: 'fugu.csv',
+      types: [
+        {
+          description: 'CSV File',
+          accept: {
+            'text/csv': ['.csv'],
+          },
+        },
+      ],
+    });
+    
+    // Generating three lines of random data
+    const data = [
+      ['Header1', 'Header2', 'Header3'],
+      [getRandomData(), getRandomData(), getRandomData()],
+      [getRandomData(), getRandomData(), getRandomData()],
+      [getRandomData(), getRandomData(), getRandomData()],
+    ];
+
+    // Convert the data to CSV format
+    const csvContent = data.map((e) => e.join(',')).join('\n');
+
+    // Create a Blob from the CSV data
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+
+    if (!this.fileHandler) return;
+    const writable = await this.fileHandler.createWritable();
+    await writable.write(blob);
+    await writable.close();
   }
 }
