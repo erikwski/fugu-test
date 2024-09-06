@@ -12,18 +12,12 @@ export class AppComponent {
   directoryPicker: FileSystemDirectoryHandle | null = null;
   fileHandler: FileSystemFileHandle | null = null;
   fileCreated = false;
+
   declareFolder() {
     try {
-      if ('showOpenFilePicker' in window) {
+      if ('showDirectoryPicker' in window) {
         (window as any)
           ['showDirectoryPicker']({
-            // types: [          //   {
-            //     description: 'Markdown files',
-            //     accept: {
-            //       'text/md': ['.tx'],
-            //     },
-            //   },
-            // ],
             multiple: false,
           })
           .then((directoryPicker: FileSystemDirectoryHandle) => {
@@ -60,7 +54,7 @@ export class AppComponent {
   async update() {
     if (!this.fileHandler) return;
     const writable = await this.fileHandler.createWritable();
-    await writable.write('Ciao');
+    await writable.write('Hello from Erik :))');
     await writable.close();
   }
 
@@ -92,7 +86,7 @@ export class AppComponent {
       return Math.random().toString(36).substring(7);
     }
 
-    this.fileHandler = await(window as any)['showSaveFilePicker']({
+    this.fileHandler = await (window as any)['showSaveFilePicker']({
       startIn: this.directoryPicker,
       suggestedName: 'fugu.csv',
       types: [
@@ -104,7 +98,7 @@ export class AppComponent {
         },
       ],
     });
-    
+
     // Generating three lines of random data
     const data = [
       ['Header1', 'Header2', 'Header3'],
